@@ -2,6 +2,7 @@ from typing import List, Tuple, Optional
 from dataclasses import dataclass, field
 import datetime
 from benchmark.hotel.user import User
+import stateflow
 
 
 @dataclass
@@ -28,7 +29,7 @@ class Room:
     room_number: int
     capacity: int
     rate: int
-    reservations: List[Reservation] = field(default=[])
+    reservations: List[Reservation] = field(default_factory=[])
 
     def is_available(self, in_date: datetime, out_date: datetime) -> bool:
         """ Checks if a room is available for a certain time range.
@@ -62,12 +63,13 @@ class Room:
         return True
 
 
+@stateflow.stateflow
 class Hotel:
     def __init__(self, hotel_id: str, rooms: List[Room]):
         self.hotel_id: str = hotel_id
         self.rooms: List[Room] = rooms
 
-    def reserve_hotel(
+    def reserve(
         self,
         user: User,
         password: str,
