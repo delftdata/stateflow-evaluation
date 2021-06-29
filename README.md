@@ -4,6 +4,10 @@ This evaluation is part of the master thesis by [Wouter Zorgdrager](https://gith
 
 ## Setup
 To setup this repository, you need to have the stateflow framework installed locally. 
+```bash
+git clone https://github.com/wzorgdrager/stateful_dataflows
+pip install path_to_this_repo
+```
 
 ### Specification
 **Reserve a hotel room.**

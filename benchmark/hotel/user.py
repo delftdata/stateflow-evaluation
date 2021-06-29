@@ -1,3 +1,7 @@
+import stateflow
+
+
+@stateflow.stateflow
 class User:
     def __init__(self, username: str, password: str, balance: int):
         self.username: str = username
