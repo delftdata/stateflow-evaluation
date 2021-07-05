@@ -1,0 +1,2 @@
+class AllHotels():
+    pass

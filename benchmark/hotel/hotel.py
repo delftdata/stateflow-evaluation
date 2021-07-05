@@ -59,6 +59,7 @@ class Room:
         if not self.is_available(in_date, out_date):
             return False
 
+        print("Appending reservations!")
         self.reservations.append(Reservation(customer_name, in_date, out_date))
         return True
 
@@ -114,7 +115,7 @@ class Hotel:
             )
 
         # If the actual reservation fails, refund the payment to the user (SAGA style).
-        if not room.make_reservation(customer_name, check_in_date, check_out_date):
+        if not self.make_reservation(room.room_number, customer_name, check_in_date, check_out_date):
             user.refund(total_price)
             return False, "No rooms available for this time range or amount of guests."
 
@@ -124,6 +125,11 @@ class Hotel:
             f"from {check_in_date.strftime('%d-%m-%y')} to {check_out_date.strftime('%d-%m-%y')} "
             f"with a total cost of {total_price}EU.",
         )
+
+    def make_reservation(self, room_number: int, customer_name: str, check_in_date: datetime, check_out_date: datetime):
+        get_room: Room = [room for room in self.rooms if room.room_number == room_number][0]
+        return get_room.make_reservation(customer_name, check_in_date, check_out_date)
+
 
     def get_room_by_availability(
         self, in_date: datetime, out_date: datetime, amount_of_guests: int
