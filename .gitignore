@@ -1,2 +1,6 @@
 .idea/
 venv/
+__pycache__/
+bin/
+*.csv
+.ipynb_checkpoints/
