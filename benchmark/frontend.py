@@ -1,5 +1,4 @@
-from .hotel.user import User
-from .hotel.hotel import Hotel
+from benchmark.hotel.user import User
 
 import stateflow
 import asyncio

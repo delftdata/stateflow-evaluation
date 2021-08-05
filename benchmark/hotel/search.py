@@ -19,6 +19,7 @@ class Search:
                 plan
             ]  # We use immutable types, because its a requirement of Stateflow.
 
+        print("FOUND ALL PLANS")
         return hotel_ids
 
     def __key__(self):
