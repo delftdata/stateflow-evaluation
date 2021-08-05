@@ -3,12 +3,14 @@ from stateflow import stateflow_test
 from stateflow.util.dataflow_visualizer import visualize_ref
 import datetime
 
+
 def test_create_hotel():
     room = Room(0, 10, 100, [])
     hotel = Hotel("0", [room])
 
     assert hotel.hotel_id == "0"
     assert hotel.rooms == room
+
 
 def test_reserve_incorrect_password():
     user = User("wouter", "123", 10000)
@@ -45,4 +47,3 @@ def test_reserve_hotel_simple():
     assert not result
     assert len(hotel.rooms.reservations) == 1
     assert user.balance == 10000 - 400
-
