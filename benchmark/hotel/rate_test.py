@@ -12,5 +12,4 @@ def test_create_rate():
 def test_get_rates():
     rate = Rate("rate-1", 80)
     assert rate.rate_id == "rate-1"
-    print(rate.get_rates())
-    assert len(rate.get_rates()) == 28
+    assert len(rate.get_rates([str(i) for i in range(0, 80)])) == 28

@@ -88,6 +88,8 @@ class Recommend:
         self, recommend_type: RecommendType, recommend_params: Dict
     ) -> List[str]:
         if recommend_type == RecommendType.DISTANCE:
+            # Hotels with minimal distance.
+
             lat: float = recommend_params["lat"]
             lon: float = recommend_params["lon"]
 
@@ -107,6 +109,7 @@ class Recommend:
             return return_hotels
 
         elif recommend_type == RecommendType.RATE:
+            # Hotels with maximum rate.
             max_rate: float = 0
 
             for hotel in self.hotels:
@@ -117,6 +120,7 @@ class Recommend:
 
             return [hotel.hotelId for hotel in self.hotels if hotel.rate == max_rate]
         elif recommend_type == RecommendType.PRICE:
+            # Hotels with minimal price.
             min_price: float = sys.float_info.max
 
             for hotel in self.hotels:

@@ -84,8 +84,10 @@ class Rate:
                     )
                 )
 
-    def get_rates(self) -> List[RatePlan]:
-        return self.rate_plans
+    def get_rates(self, hotel_ids: List[str]) -> List[RatePlan]:
+        # Deathstar benchmark mentions getting rates for a specific date range.
+        # In practice, they just return all rates matching a hotel id.
+        return [plan for plan in self.rate_plans if plan.hotelId in hotel_ids]
 
     def __key__(self):
         return self.rate_id
