@@ -61,9 +61,13 @@ class Geo:
             (point.hotelId, self._dist(point.lat, point.lon, float(lat), float(lon)))
             for point in self.geo_points
         ]
+        # This is quite inefficient for large lists, but we can improve it later.
+        all_distances = [
+            dist for dist in all_distances if dist[1] <= Geo.MAX_SEARCH_RADIUS
+        ]
         all_distances.sort(key=lambda x: x[1], reverse=False)
 
-        limit_distances = all_distances[0 : self.MAX_SEARCH_RESULTS]
+        limit_distances = all_distances[0 : Geo.MAX_SEARCH_RESULTS]
         return list([x[0] for x in limit_distances])
 
     def __key__(self):
