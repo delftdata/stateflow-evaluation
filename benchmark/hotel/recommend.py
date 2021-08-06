@@ -18,9 +18,9 @@ class HotelRecommend:
 
 
 class RecommendType(Enum):
-    DISTANCE = 1
-    RATE = 2
-    PRICE = 3
+    DISTANCE = "DISTANCE"
+    RATE = "RATE"
+    PRICE = "PRICE"
 
 
 @stateflow.stateflow

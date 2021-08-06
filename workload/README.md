@@ -13,3 +13,5 @@ export PYFLINK_CLIENT_EXECUTABLE=/usr/bin/python3.8
   --jarfile ~/Documents/stateflow-evaluation/benchmark/bin/combined.jar
 
 ```
+
+sudo ./wrk -t 4 -c 10 -d 30s -R 10 -s "./hotel.lua" -L "http://localhost:8001"

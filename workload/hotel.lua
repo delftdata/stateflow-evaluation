@@ -4,7 +4,7 @@ math.random(); math.random(); math.random()
 
 local function get_user()
   local id = math.random(0, 500)
-  local user_name = "wouter-" .. tostring(id)
+  local user_name = "TUDelft_" .. tostring(id)
   local pass_word = ""
   for i = 0, 9, 1 do
     pass_word = pass_word .. tostring(id)
@@ -34,8 +34,8 @@ local function search_hotel()
   local lon = -122.095 + (math.random(0, 325) - 157.0)/1000.0
 
   local method = "GET"
-  local path = "http://localhost:5000/hotels?inDate=" .. in_date_str ..
-    "&outDate=" .. out_date_str .. "&lat=" .. tostring(lat) .. "&lon=" .. tostring(lon)
+  local path = "/search?in_date=" .. in_date_str ..
+    "&out_date=" .. out_date_str .. "&lat=" .. tostring(lat) .. "&lon=" .. tostring(lon)
 
   local headers = {}
   -- headers["Content-Type"] = "application/x-www-form-urlencoded"
@@ -46,18 +46,18 @@ local function recommend()
   local coin = math.random()
   local req_param = ""
   if coin < 0.33 then
-    req_param = "dis"
+    req_param = "DISTANCE"
   elseif coin < 0.66 then
-    req_param = "rate"
+    req_param = "RATE"
   else
-    req_param = "price"
+    req_param = "PRICE"
   end
 
   local lat = 38.0235 + (math.random(0, 481) - 240.5)/1000.0
   local lon = -122.095 + (math.random(0, 325) - 157.0)/1000.0
 
   local method = "GET"
-  local path = "http://localhost:5000/recommendations?require=" .. req_param ..
+  local path = "/recommend?recommendation_type=" .. req_param ..
     "&lat=" .. tostring(lat) .. "&lon=" .. tostring(lon)
   local headers = {}
   -- headers["Content-Type"] = "application/x-www-form-urlencoded"
@@ -89,10 +89,10 @@ local function reserve()
   local num_room = "1"
 
   local method = "POST"
-  local path = "http://localhost:5000/reservation?inDate=" .. in_date_str ..
-    "&outDate=" .. out_date_str .. "&lat=" .. tostring(lat) .. "&lon=" .. tostring(lon) ..
-    "&hotelId=" .. hotel_id .. "&customerName=" .. cust_name .. "&username=" .. user_id ..
-    "&password=" .. password .. "&number=" .. num_room
+  local path = "/login/reserve?in_date=" .. in_date_str ..
+    "&out_date=" .. out_date_str ..
+    "&hotel_id=" .. hotel_id .. "&customer_name=" .. cust_name .. "&username=" .. user_id ..
+    "&password=" .. password .. "&amount_of_rooms=" .. num_room
   local headers = {}
   -- headers["Content-Type"] = "application/x-www-form-urlencoded"
   return wrk.format(method, path, headers, nil)
@@ -101,7 +101,7 @@ end
 local function user_login()
   local user_name, password = get_user()
   local method = "POST"
-  local path = "/stateflow/global/User/login?key=" .. user_name .. "&password=" .. password
+  local path = "/login?username=" .. user_name .. "&password=" .. password
   local headers = {}
   -- headers["Content-Type"] = "application/x-www-form-urlencoded"
   return wrk.format(method, path, headers, nil)
@@ -115,14 +115,14 @@ request = function()
   local reserve_ratio     = 0.005
 
   local coin = math.random()
---   if coin < search_ratio then
---     return search_hotel()
---   elseif coin < search_ratio + recommend_ratio then
---     return recommend()
---   elseif coin < search_ratio + recommend_ratio + user_ratio then
---     return user_login()
---   else
---     return reserve()
--- end
-  return user_login()
+   if coin < search_ratio then
+     return search_hotel()
+   elseif coin < search_ratio + recommend_ratio then
+     return recommend()
+   elseif coin < search_ratio + recommend_ratio + user_ratio then
+     return user_login()
+   else
+     return reserve()
+ end
+  --return user_login()
 end

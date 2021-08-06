@@ -16,7 +16,7 @@ class Search:
         hotel_ids: List[str] = []
         for plan in rate_plans:
             hotel_ids = hotel_ids + [
-                plan
+                plan.hotelId
             ]  # We use immutable types, because its a requirement of Stateflow.
 
         print("FOUND ALL PLANS")
