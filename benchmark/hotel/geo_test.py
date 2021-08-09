@@ -1,4 +1,4 @@
-from benchmark.hotel.geo import Geo
+from .geo import Geo
 from stateflow import stateflow_test
 from stateflow.util.dataflow_visualizer import visualize_ref
 

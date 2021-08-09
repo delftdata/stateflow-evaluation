@@ -5,7 +5,7 @@ from benchmark.hotel.profile import Profile, HotelProfile
 from benchmark.hotel.recommend import RecommendType, Recommend
 from typing import List
 from random import randrange
-
+import os
 import stateflow
 import asyncio
 from stateflow.client.fastapi.kafka import KafkaFastAPIClient, StateflowFailure
@@ -17,15 +17,8 @@ AMOUNT_OF_HOTELS = 80
 AMOUNT_OF_USERS = 500
 PARTITION_COUNT = AMOUNT_OF_HOTELS
 
-parser = argparse.ArgumentParser(description='Stateflow FastAPI frontend for Deathstar benchmark.')
-parser.add_argument('producer_config', metavar='p', type=str,
-                    help='filename for the producer config')
-parser.add_argument('consumer_config', metavar='p', type=str,
-                    help='filename for the consumer config')
-
-args = parser.parse_args()
-producer_config = json.load(args.producer_config)
-consumer_config = json.load(args.consumer_config)
+producer_config = json.load(open(os.environ.get("PRODUCER_CONF"), 'r'))
+consumer_config = json.load(open(os.environ.get("CONSUMER_CONF"), 'r'))
 
 client = KafkaFastAPIClient(stateflow.init(), statefun_mode=True, producer_config=producer_config, consumer_config=consumer_config)
 app = client.get_app()
