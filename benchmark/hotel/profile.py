@@ -35,7 +35,7 @@ class Profile:
         self._load_data(amount_of_hotels)
 
     def _load_data(self, amount_of_hotels: int):
-        data = json.load(open("./hotel/data/hotels.json"))
+        data = json.load(open("./benchmark/hotel/data/hotels.json"))
         for d in data:
             self.profiles.append(
                 HotelProfile(

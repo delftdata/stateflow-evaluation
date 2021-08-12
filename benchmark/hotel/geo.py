@@ -26,7 +26,7 @@ class Geo:
         self._load_data(amount_of_hotels)
 
     def _load_data(self, amount_of_hotels):
-        data = json.load(open("./hotel/data/geo.json"))
+        data = json.load(open("./benchmark/hotel/data/geo.json"))
         for d in data:
             self.geo_points.append(
                 GeoPoint(d["hotelId"], float(d["lat"]), float(d["lon"]))

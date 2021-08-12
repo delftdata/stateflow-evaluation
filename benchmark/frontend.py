@@ -9,18 +9,27 @@ import os
 import stateflow
 import asyncio
 from stateflow.client.fastapi.kafka import KafkaFastAPIClient, StateflowFailure
+from stateflow.client.fastapi.aws_gateway import AWSGatewayFastAPIClient
 import json
 import argparse
 
 
+IS_KAFKA = bool(os.getenv("KAFKA"))
+
 AMOUNT_OF_HOTELS = 80
 AMOUNT_OF_USERS = 500
-PARTITION_COUNT = AMOUNT_OF_HOTELS
+PARTITION_COUNT = os.getenv("NUM_PARTITIONS", AMOUNT_OF_HOTELS)
+print(IS_KAFKA)
 
-producer_config = json.load(open(os.environ.get("PRODUCER_CONF"), 'r'))
-consumer_config = json.load(open(os.environ.get("CONSUMER_CONF"), 'r'))
+if IS_KAFKA and False:
+    producer_config = json.load(open(os.environ.get("PRODUCER_CONF"), 'r'))
+    consumer_config = json.load(open(os.environ.get("CONSUMER_CONF"), 'r'))
 
-client = KafkaFastAPIClient(stateflow.init(), statefun_mode=True, producer_config=producer_config, consumer_config=consumer_config)
+    client = KafkaFastAPIClient(stateflow.init(), statefun_mode=True, producer_config=producer_config, consumer_config=consumer_config)
+else:
+    ADDRESS = os.environ.get("ADDRESS")
+    TIMEOUT = int(os.getenv("TIMEOUT", 5))
+    client = AWSGatewayFastAPIClient(stateflow.init(), api_gateway_url=ADDRESS, timeout=TIMEOUT)
 app = client.get_app()
 
 
@@ -37,27 +46,31 @@ async def check_availability_hotel(hotel_id: str, in_date, out_date):
 
 @app.get("/search")
 async def search(lat: float, lon: float, in_date: str, out_date: str):
-    # Here we select the 'partitioned services'.
-    partition_id = _get_partition()
-    search: Search = await Search.by_key(f"search-service-{partition_id}")
-    geo: Geo = await Geo.by_key(f"geo-service-{partition_id}")
-    rate: Rate = await Rate.by_key(f"rate-service-{partition_id}")
-    profile: Profile = await Profile.by_key(f"profile-service-{partition_id}")
+    try :
+        # Here we select the 'partitioned services'.
+        partition_id = _get_partition()
+        search: Search = await Search.by_key(f"search-service-{partition_id}")
+        geo: Geo = await Geo.by_key(f"geo-service-{partition_id}")
+        rate: Rate = await Rate.by_key(f"rate-service-{partition_id}")
+        profile: Profile = await Profile.by_key(f"profile-service-{partition_id}")
 
-    # Find nearby hotels.
-    nearby_hotels: List[str] = await search.nearby(lat, lon, geo, rate)
+        # Find nearby hotels.
+        nearby_hotels: List[str] = await search.nearby(lat, lon, geo, rate)
 
-    # All available hotels.
-    available_hotels: List[str] = []
+        # All available hotels.
+        available_hotels: List[str] = []
 
-    availability = asyncio.as_completed([check_availability_hotel(hotel_id, in_date, out_date) for hotel_id in nearby_hotels])
+        availability = asyncio.as_completed([check_availability_hotel(hotel_id, in_date, out_date) for hotel_id in nearby_hotels])
 
-    for fut in availability:
-        hotel_id, is_available = await fut
-        if is_available:
-            available_hotels.append(hotel_id)
+        for fut in availability:
+            hotel_id, is_available = await fut
+            if is_available:
+                available_hotels.append(hotel_id)
 
-    profiles: List[HotelProfile] = await profile.get_profiles(available_hotels)
+        profiles: List[HotelProfile] = await profile.get_profiles(available_hotels)
+    except Exception:
+        return "Internal server error"
+
     return profiles
 
 

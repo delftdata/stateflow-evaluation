@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: workload
+  namespace: stateflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workload
+  template:
+    metadata:
+      labels:
+        app: workload
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - stateflow-frontend
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - name: workload
+          image: "bootjp/wrk2"
+          args: ["./wrk -t 4 -c 10 -d 30s -R 10 -s './hotel.lua' -L 'http://a44fa51188dcb417cbf3c27671edba8a-1209714661.eu-west-2.elb.amazonaws.com/'"]
+          volumeMounts:
+            - name: benchmark-volume
+              mountPath: /workload
+              readOnly: false
+      volumes:
+        - name: benchmark-volume # kubectl create configmap benchmark-config --from-file=hotel=hotel.lua -n stateflow
+          configMap:
+            name: benchmark-config
+            items:
+              - key: hotel
+                path: hotel.lua

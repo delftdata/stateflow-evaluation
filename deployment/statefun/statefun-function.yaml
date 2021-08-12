@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stateflow-remote-statefun
+  namespace: stateflow
+spec:
+  replicas: 20
+  selector:
+    matchLabels:
+      app: stateflow-remote-statefun
+  template:
+    metadata:
+      labels:
+        app: stateflow-remote-statefun
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - stateflow-frontend
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - name: fastapi-remote-statefun
+          image: "wzorgdrager/stateflow-statefun:0.0.4"
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "1024Mi"
+              cpu: "750m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1000m"

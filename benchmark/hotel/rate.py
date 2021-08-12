@@ -32,7 +32,7 @@ class Rate:
         self._load_data(amount_of_hotels)
 
     def _load_data(self, amount_of_hotels):
-        data = json.load(open("./hotel/data/inventory.json"))
+        data = json.load(open("./benchmark/hotel/data/inventory.json"))
         for d in data:
             self.rate_plans.append(
                 RatePlan(

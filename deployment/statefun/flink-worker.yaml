@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flink-taskmanager
+  name: taskmanager
   namespace: stateflow
 spec:
   replicas: 4
@@ -22,14 +22,14 @@ spec:
           - name: ROLE
             value: "worker"
           - name: MASTER_HOST
-            value: "flink-jobmanager"
+            value: "jobmanager"
           resources:
             requests:
-              memory: "1024Mi"
-              cpu: "750m"
+              memory: "8000Mi"
+              cpu: "1750m"
             limits:
-              memory: "1024Mi"
-              cpu: "1000m"
+              memory: "8192Mi"
+              cpu: "2000m"
           ports:
             - containerPort: 6122
               name: rpc
@@ -41,6 +41,8 @@ spec:
           volumeMounts:
             - name: flink-config-volume
               mountPath: /opt/flink/conf/
+            - name: statefun-config-volume
+              mountPath: /opt/statefun/modules/stateflow/
           securityContext:
             runAsUser: 9999  # refers to user _flink_ from official flink image, change if necessary
       volumes:
@@ -51,4 +53,11 @@ spec:
               - key: flink-conf.yaml
                 path: flink-conf.yaml
               - key: log4j.properties
-                path: log4j.properties
+                path: log4j-console.properties
+        - name: statefun-config-volume
+          # Create configMap using kubectl: kubectl create configmap module --from-file=module_key=module.yaml
+          configMap:
+            name: statefun-config
+            items:
+              - key: statefun-module
+                path: module.yaml

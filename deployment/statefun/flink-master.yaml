@@ -18,105 +18,22 @@ data:
                 id: stateflow/kafka-egress
                 type: io.statefun.kafka/egress
               spec:
-                address: kafka-broker:9093
-        endpoints:
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: globals/ping
-                urlPathTemplate: http://host-machine:8000/statefun
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: global/User
-                urlPathTemplate: http://host-machine:8000/statefun
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: global/User_create
-                urlPathTemplate: http://host-machine:8000/statefun
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: global/Geo
-                urlPathTemplate: http://host-machine:8000/statefun
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: global/Geo_create
-                urlPathTemplate: http://host-machine:8000/statefun
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: global/Rate
-                urlPathTemplate: http://host-machine:8000/statefun
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: global/Rate_create
-                urlPathTemplate: http://host-machine:8000/statefun
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: global/Search
-                urlPathTemplate: http://host-machine:8000/statefun
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: global/Search_create
-                urlPathTemplate: http://host-machine:8000/statefun
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: global/Reservation
-                urlPathTemplate: http://host-machine:8000/statefun
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: global/Reservation_create
-                urlPathTemplate: http://host-machine:8000/statefun
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: global/Profile
-                urlPathTemplate: http://host-machine:8000/statefun
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: global/Profile_create
-                urlPathTemplate: http://host-machine:8000/statefun
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: global/Recommend
-                urlPathTemplate: http://host-machine:8000/statefun
-          - endpoint:
-              meta:
-                kind: http
-              spec:
-                functions: global/Recommend_create
-                urlPathTemplate: http://host-machine:8000/statefun
+                address: pkc-41wq6.eu-west-2.aws.confluent.cloud:9092
+                deliverySemantic:
+                  type: exactly-once
+                  transactionTimeoutMillis: 100000
+                properties:
+                  - sasl.mechanism: PLAIN
+                  - security.protocol: SASL_SSL
+                  - sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="{USERNAME}" password="{PASS}";
+                  - ssl.endpoint.identification.algorithm: https
         ingresses:
           - ingress:
               meta:
                 id: stateflow/kafka-ingress
                 type: io.statefun.kafka/ingress
               spec:
-                address: kafka-broker:9093
+                address: pkc-41wq6.eu-west-2.aws.confluent.cloud:9092
                 consumerGroupId: stateflow-statefun-consumer
                 topics:
                   - targets:
@@ -179,6 +96,102 @@ data:
                       - globals/ping
                     topic: globals_ping
                     valueType: stateflow/byte_type
+                properties:
+                  - sasl.mechanism: PLAIN
+                  - security.protocol: SASL_SSL
+                  - sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="{USERNAME}" password="{PASSWORD}";
+                  - ssl.endpoint.identification.algorithm: https
+        endpoints:
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: globals/ping
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: global/User
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: global/User_create
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: global/Geo
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: global/Geo_create
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: global/Rate
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: global/Rate_create
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: global/Search
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: global/Search_create
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: global/Reservation
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: global/Reservation_create
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: global/Profile
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: global/Profile_create
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: global/Recommend
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+          - endpoint:
+              meta:
+                kind: http
+              spec:
+                functions: global/Recommend_create
+                urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -189,13 +202,13 @@ metadata:
     app: flink
 data:
   flink-conf.yaml: |+
-    jobmanager.rpc.address: flink-jobmanager
-    taskmanager.numberOfTaskSlots: 1
+    jobmanager.rpc.address: statefun-master
+    taskmanager.numberOfTaskSlots: 5
     blob.server.port: 6124
     jobmanager.rpc.port: 6123
     taskmanager.rpc.port: 6122
     classloader.parent-first-patterns.additional: org.apache.flink.statefun;org.apache.kafka;com.google.protobuf
-    parallelism.default: 1
+    parallelism.default: 20
     statefun.flink-job-name: stateflow
     execution.checkpointing.interval: 10sec
     execution.checkpointing.mode: AT_LEAST_ONCE
@@ -203,8 +216,7 @@ data:
     restart-strategy.fixed-delay.attempts: 2147483647
     restart-strategy.fixed-delay.delay: 1sec
     jobmanager.memory.process.size: 1g
-    taskmanager.memory.process.size: 1g
-    parallelism.default: 3
+    taskmanager.memory.process.size: 8g
   log4j.properties: |+
     rootLogger.level = INFO
     rootLogger.appenderRef.console.ref = ConsoleAppender
@@ -239,7 +251,7 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flink-jobmanager
+  name: jobmanager
   namespace: stateflow
 spec:
   replicas: 1
@@ -259,6 +271,8 @@ spec:
           env:
           - name: ROLE
             value: "master"
+          - name: MASTER_HOST
+            value: "jobmanager"
           ports:
             - containerPort: 6123
               name: rpc
@@ -305,7 +319,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: flink-jobmanager
+  name: jobmanager
+  namespace: stateflow
 spec:
   type: ClusterIP
   ports:
@@ -325,7 +340,7 @@ metadata:
   name: flink-jobmanager-rest
   namespace: stateflow
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
     - name: rest
       port: 8081

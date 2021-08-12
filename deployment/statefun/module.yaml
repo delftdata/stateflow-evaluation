@@ -4,169 +4,182 @@ module:
     type: remote
   spec:
     egresses:
-    - egress:
-        meta:
-          id: stateflow/kafka-egress
-          type: io.statefun.kafka/egress
-        spec:
-          address: kafka-broker:9093
+      - egress:
+          meta:
+            id: stateflow/kafka-egress
+            type: io.statefun.kafka/egress
+          spec:
+            address: pkc-41wq6.eu-west-2.aws.confluent.cloud:9092
+            deliverySemantic:
+              type: exactly-once
+              transactionTimeoutMillis: 100000
+            properties:
+              - sasl.mechanism: PLAIN
+              - security.protocol: SASL_SSL
+              - sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="{USERNAME}" password="{PASS}";
+              - ssl.endpoint.identification.algorithm: https
     endpoints:
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: globals/ping
-          urlPathTemplate: http://host-machine:8000/statefun
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: global/User
-          urlPathTemplate: http://host-machine:8000/statefun
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: global/User_create
-          urlPathTemplate: http://host-machine:8000/statefun
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: global/Geo
-          urlPathTemplate: http://host-machine:8000/statefun
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: global/Geo_create
-          urlPathTemplate: http://host-machine:8000/statefun
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: global/Rate
-          urlPathTemplate: http://host-machine:8000/statefun
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: global/Rate_create
-          urlPathTemplate: http://host-machine:8000/statefun
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: global/Search
-          urlPathTemplate: http://host-machine:8000/statefun
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: global/Search_create
-          urlPathTemplate: http://host-machine:8000/statefun
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: global/Reservation
-          urlPathTemplate: http://host-machine:8000/statefun
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: global/Reservation_create
-          urlPathTemplate: http://host-machine:8000/statefun
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: global/Profile
-          urlPathTemplate: http://host-machine:8000/statefun
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: global/Profile_create
-          urlPathTemplate: http://host-machine:8000/statefun
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: global/Recommend
-          urlPathTemplate: http://host-machine:8000/statefun
-    - endpoint:
-        meta:
-          kind: http
-        spec:
-          functions: global/Recommend_create
-          urlPathTemplate: http://host-machine:8000/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: globals/ping
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: global/User
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: global/User_create
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: global/Geo
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: global/Geo_create
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: global/Rate
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: global/Rate_create
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: global/Search
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: global/Search_create
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: global/Reservation
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: global/Reservation_create
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: global/Profile
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: global/Profile_create
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: global/Recommend
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
+      - endpoint:
+          meta:
+            kind: http
+          spec:
+            functions: global/Recommend_create
+            urlPathTemplate: http://a69d445f861454f70bd72f193105a99d-1468786289.eu-west-2.elb.amazonaws.com/statefun
     ingresses:
-    - ingress:
-        meta:
-          id: stateflow/kafka-ingress
-          type: io.statefun.kafka/ingress
-        spec:
-          address: kafka-broker:9093
-          consumerGroupId: stateflow-statefun-consumer
-          topics:
-          - targets:
-            - global/User
-            topic: global_User
-            valueType: stateflow/byte_type
-          - targets:
-            - global/User_create
-            topic: global_User_create
-            valueType: stateflow/byte_type
-          - targets:
-            - global/Geo
-            topic: global_Geo
-            valueType: stateflow/byte_type
-          - targets:
-            - global/Geo_create
-            topic: global_Geo_create
-            valueType: stateflow/byte_type
-          - targets:
-            - global/Rate
-            topic: global_Rate
-            valueType: stateflow/byte_type
-          - targets:
-            - global/Rate_create
-            topic: global_Rate_create
-            valueType: stateflow/byte_type
-          - targets:
-            - global/Search
-            topic: global_Search
-            valueType: stateflow/byte_type
-          - targets:
-            - global/Search_create
-            topic: global_Search_create
-            valueType: stateflow/byte_type
-          - targets:
-            - global/Reservation
-            topic: global_Reservation
-            valueType: stateflow/byte_type
-          - targets:
-            - global/Reservation_create
-            topic: global_Reservation_create
-            valueType: stateflow/byte_type
-          - targets:
-            - global/Profile
-            topic: global_Profile
-            valueType: stateflow/byte_type
-          - targets:
-            - global/Profile_create
-            topic: global_Profile_create
-            valueType: stateflow/byte_type
-          - targets:
-            - global/Recommend
-            topic: global_Recommend
-            valueType: stateflow/byte_type
-          - targets:
-            - global/Recommend_create
-            topic: global_Recommend_create
-            valueType: stateflow/byte_type
-          - targets:
-            - globals/ping
-            topic: globals_ping
-            valueType: stateflow/byte_type
+      - ingress:
+          meta:
+            id: stateflow/kafka-ingress
+            type: io.statefun.kafka/ingress
+          spec:
+            address: pkc-41wq6.eu-west-2.aws.confluent.cloud:9092
+            consumerGroupId: stateflow-statefun-consumer
+            topics:
+              - targets:
+                  - global/User
+                topic: global_User
+                valueType: stateflow/byte_type
+              - targets:
+                  - global/User_create
+                topic: global_User_create
+                valueType: stateflow/byte_type
+              - targets:
+                  - global/Geo
+                topic: global_Geo
+                valueType: stateflow/byte_type
+              - targets:
+                  - global/Geo_create
+                topic: global_Geo_create
+                valueType: stateflow/byte_type
+              - targets:
+                  - global/Rate
+                topic: global_Rate
+                valueType: stateflow/byte_type
+              - targets:
+                  - global/Rate_create
+                topic: global_Rate_create
+                valueType: stateflow/byte_type
+              - targets:
+                  - global/Search
+                topic: global_Search
+                valueType: stateflow/byte_type
+              - targets:
+                  - global/Search_create
+                topic: global_Search_create
+                valueType: stateflow/byte_type
+              - targets:
+                  - global/Reservation
+                topic: global_Reservation
+                valueType: stateflow/byte_type
+              - targets:
+                  - global/Reservation_create
+                topic: global_Reservation_create
+                valueType: stateflow/byte_type
+              - targets:
+                  - global/Profile
+                topic: global_Profile
+                valueType: stateflow/byte_type
+              - targets:
+                  - global/Profile_create
+                topic: global_Profile_create
+                valueType: stateflow/byte_type
+              - targets:
+                  - global/Recommend
+                topic: global_Recommend
+                valueType: stateflow/byte_type
+              - targets:
+                  - global/Recommend_create
+                topic: global_Recommend_create
+                valueType: stateflow/byte_type
+              - targets:
+                  - globals/ping
+                topic: globals_ping
+                valueType: stateflow/byte_type
+            properties:
+              - sasl.mechanism: PLAIN
+              - security.protocol: SASL_SSL
+              - sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="{USERNAME}" password="{PASS}";
+              - ssl.endpoint.identification.algorithm: https

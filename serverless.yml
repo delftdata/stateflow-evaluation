@@ -1,0 +1,43 @@
+service: stateflow
+provider:
+  name: aws
+  region: eu-west-2
+  runtime: python3.8
+  iam:
+    role: arn:aws:iam::958167380706:role/stateflow-dev-eu-west-1-lambdaRole
+plugins:
+  - serverless-python-requirements
+package:
+  exclude:
+    - 'venv/**'
+    - 'node_modules/**'
+custom:
+  pythonRequirements:
+    invalidateCaches: true
+    usePipenv: true
+    slim: false
+    noDeploy:
+      - Flask
+      - flake8
+      - apache-beam
+      - apache_beam
+      - pyflink
+      - coverage
+      - confluent-kafka
+      - beam-nuggets
+      - httplib2
+      - google-api-python-client
+      - apache-flink-libraries
+      - pytest-mock
+      - PyHamcrest
+      - pytest-docker-fixtures
+      - pytest-timeout
+      - apache-flink
+      - pandas
+      - numpy
+      - ujson
+      - boto3
+functions:
+  stateflow:
+    handler: runtime_aws.handler
+    memorySize: 1024 # optional, in MB, default is 1024

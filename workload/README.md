@@ -8,7 +8,7 @@ export PYFLINK_CLIENT_EXECUTABLE=/usr/bin/python3.8
   -m localhost:8081 \
   -pyarch venv.zip \
   -pyexec venv.zip/venv/bin/python \
-  --parallelism 4 \
+  --parallelism 1 \
   --python ~/Documents/stateflow-evaluation/benchmark/runtime.py \
   --jarfile ~/Documents/stateflow-evaluation/benchmark/bin/combined.jar
 
