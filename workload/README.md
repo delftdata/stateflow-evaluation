@@ -1,15 +1,17 @@
 ```bash
 sudo luarocks install luasocket
 
-export PYFLINK_CLIENT_EXECUTABLE=/usr/bin/python3.8
-./bin/flink run -pyexec /usr/bin/local/python3.8 --python ~/Documents/stateflow-evaluation/benchmark/runtime.py --parallelism 4
+export PYFLINK_CLIENT_EXECUTABLE=~/Documents/stateflow-evaluation/venv/bin/python
+/usr/bin/python3.8
+
+./bin/flink run -pyexec /usr/bin/local/python3.8 --python ~/Documents/stateflow-evaluation/pyflink_runtime.py --parallelism 1
 ./flink run \
-  --target local \
+  --target remote \
   -m localhost:8081 \
   -pyarch venv.zip \
-  -pyexec venv.zip/venv/bin/python \
+  --pyExecutable venv.zip/venv/bin/python \
   --parallelism 1 \
-  --python ~/Documents/stateflow-evaluation/benchmark/runtime.py \
+  --python ~/Documents/stateflow-evaluation/pyflink_runtime.py \
   --jarfile ~/Documents/stateflow-evaluation/benchmark/bin/combined.jar
 
 ```

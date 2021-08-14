@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stateflow-frontend
+  namespace: stateflow
+spec:
+  replicas: 20
+  selector:
+    matchLabels:
+      app: stateflow-frontend
+  template:
+    metadata:
+      labels:
+        app: stateflow-frontend
+    spec:
+      containers:
+        - name: fastapi-frontend
+          image: "wzorgdrager/stateflow-frontend:0.1.3"
+          env:
+          - name: "KAFKA"
+            value: "False"
+          - name: "TIMEOUT"
+            value: "10"
+          - name: "ADDRESS"
+            value: "https://r2q5pdxa8e.execute-api.eu-west-2.amazonaws.com/dev/stateflow"
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "1024Mi"
+              cpu: "750m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1000m"

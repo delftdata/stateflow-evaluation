@@ -88,8 +88,8 @@ local function reserve()
 
   local num_room = "1"
 
-  local method = "POST"
-  local path = "/login/reserve?in_date=" .. in_date_str ..
+  local method = "GET"
+  local path = "/reserve?in_date=" .. in_date_str ..
     "&out_date=" .. out_date_str ..
     "&hotel_id=" .. hotel_id .. "&customer_name=" .. cust_name .. "&username=" .. user_id ..
     "&password=" .. password .. "&amount_of_rooms=" .. num_room
@@ -100,7 +100,7 @@ end
 
 local function user_login()
   local user_name, password = get_user()
-  local method = "POST"
+  local method = "GET"
   local path = "/login?username=" .. user_name .. "&password=" .. password
   local headers = {}
   -- headers["Content-Type"] = "application/x-www-form-urlencoded"
@@ -109,9 +109,9 @@ end
 
 request = function()
   cur_time = math.floor(socket.gettime())
-  local search_ratio      = 0.005
+  local search_ratio      = 0.6
   local recommend_ratio   = 0.39
-  local user_ratio        = 0.61
+  local user_ratio        = 0.005
   local reserve_ratio     = 0.005
 
   local coin = math.random()
@@ -124,5 +124,5 @@ request = function()
    else
      return reserve()
  end
-  --return user_login()
+  --return search_hotel()
 end

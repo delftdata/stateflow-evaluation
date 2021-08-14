@@ -9,9 +9,10 @@ git clone https://github.com/wzorgdrager/stateful_dataflows
 pip install path_to_this_repo
 ```
 
-### Specification
-**Reserve a hotel room.**
-1. Login a user.
-2. Finds an available room based on a checkin date, checkout date and room size.
-3. If room is available, let the user pay for it.
-4. Make the room reservation, if this fails refund the user.
+## Experiments
+We run multiple types of experiments:
+- Overhead experiments: we show the overhead of different components. Results can be found in `results/overhead/overhead_results_with_runtime.ipynb` and `results/overhead/overhead_results_without_runtime.ipynb`.
+- Performance experiments: the setups and deployments can be found in `deployment/[aws|flink|pyflink]` folders. Results can be found in `results/performance`. 
+
+### Deathstar benchmark specification
+Coming soon
