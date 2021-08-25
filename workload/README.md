@@ -1,23 +1,3 @@
-```bash
-sudo luarocks install luasocket
-
-export PYFLINK_CLIENT_EXECUTABLE=~/Documents/stateflow-evaluation/venv/bin/python
-/usr/bin/python3.8
-
-./bin/flink run -pyexec /usr/bin/local/python3.8 --python ~/Documents/stateflow-evaluation/pyflink_runtime.py --parallelism 1
-./flink run \
-  --target remote \
-  -m localhost:8081 \
-  -pyarch venv.zip \
-  --pyExecutable venv.zip/venv/bin/python \
-  --parallelism 1 \
-  --python ~/Documents/stateflow-evaluation/pyflink_runtime.py \
-  --jarfile ~/Documents/stateflow-evaluation/benchmark/bin/combined.jar
-
-```
-
-sudo ./wrk -t 4 -c 10 -d 30s -R 10 -s "./hotel.lua" -L "http://localhost:8001"
-
 # Benchmark deployment details
 To deploy the benchmark we picked an EC2 instance, but this could be any compute instance. Its easiest if the instance
 has some default installations, so we picked an Ubuntu distribution. Then we installed `wrk2`:

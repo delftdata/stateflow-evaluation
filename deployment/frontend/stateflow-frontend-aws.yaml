@@ -22,7 +22,7 @@ spec:
           - name: "TIMEOUT"
             value: "10"
           - name: "ADDRESS"
-            value: "https://r2q5pdxa8e.execute-api.eu-west-2.amazonaws.com/dev/stateflow"
+            value: ""
           ports:
             - containerPort: 80
           resources:

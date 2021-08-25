@@ -1,35 +1,65 @@
-from benchmark.hotel.user import User
-from benchmark.hotel.search import Search, Geo, Rate
-from benchmark.hotel.reservation import Reservation
-from benchmark.hotel.profile import Profile, HotelProfile
-from benchmark.hotel.recommend import RecommendType, Recommend
+import os
+import sys
+
+IS_PYFLINK = bool(os.getenv("PYFLINK"))
+
+
+if IS_PYFLINK:
+    from pyflink.user import User
+    from pyflink.search import Search, Geo, Rate
+    from pyflink.reservation import Reservation
+    from pyflink.hprofile import Profile, HotelProfile
+    from pyflink.recommend import RecommendType, Recommend
+
+    print("I'm here!")
+else:
+    from benchmark.hotel.user import User
+    from benchmark.hotel.search import Search, Geo, Rate
+    from benchmark.hotel.reservation import Reservation
+    from benchmark.hotel.profile import Profile, HotelProfile
+    from benchmark.hotel.recommend import RecommendType, Recommend
+
 from typing import List
 from random import randrange
 import os
 import stateflow
 import asyncio
 from stateflow.client.fastapi.kafka import KafkaFastAPIClient, StateflowFailure
-from stateflow.client.fastapi.aws_gateway import AWSGatewayFastAPIClient
 import json
 import argparse
 
 
 IS_KAFKA = bool(os.getenv("KAFKA"))
+IS_PYFLINK = bool(os.getenv("PYFLINK"))
 
 AMOUNT_OF_HOTELS = 80
 AMOUNT_OF_USERS = 500
 PARTITION_COUNT = os.getenv("NUM_PARTITIONS", AMOUNT_OF_HOTELS)
+TIMEOUT = int(os.getenv("TIMEOUT", 5))
+
 print(IS_KAFKA)
+print(IS_PYFLINK)
 
 if IS_KAFKA and False:
-    producer_config = json.load(open(os.environ.get("PRODUCER_CONF"), 'r'))
-    consumer_config = json.load(open(os.environ.get("CONSUMER_CONF"), 'r'))
+    producer_config = json.load(open(os.environ.get("PRODUCER_CONF"), "r"))
+    consumer_config = json.load(open(os.environ.get("CONSUMER_CONF"), "r"))
 
-    client = KafkaFastAPIClient(stateflow.init(), statefun_mode=True, producer_config=producer_config, consumer_config=consumer_config)
+    client = KafkaFastAPIClient(
+        stateflow.init(),
+        statefun_mode=True,
+        producer_config=producer_config,
+        consumer_config=consumer_config,
+        timeout=TIMEOUT,
+    )
+elif IS_PYFLINK:
+    client = KafkaFastAPIClient(stateflow.init(), statefun_mode=False, timeout=TIMEOUT)
 else:
+    from stateflow.client.fastapi.aws_gateway import AWSGatewayFastAPIClient
+
     ADDRESS = os.environ.get("ADDRESS")
-    TIMEOUT = int(os.getenv("TIMEOUT", 5))
-    client = AWSGatewayFastAPIClient(stateflow.init(), api_gateway_url=ADDRESS, timeout=TIMEOUT)
+    client = AWSGatewayFastAPIClient(
+        stateflow.init(), api_gateway_url=ADDRESS, timeout=TIMEOUT
+    )
 app = client.get_app()
 
 
@@ -46,7 +76,7 @@ async def check_availability_hotel(hotel_id: str, in_date, out_date):
 
 @app.get("/search")
 async def search(lat: float, lon: float, in_date: str, out_date: str):
-    try :
+    try:
         # Here we select the 'partitioned services'.
         partition_id = _get_partition()
         search: Search = await Search.by_key(f"search-service-{partition_id}")
@@ -60,7 +90,12 @@ async def search(lat: float, lon: float, in_date: str, out_date: str):
         # All available hotels.
         available_hotels: List[str] = []
 
-        availability = asyncio.as_completed([check_availability_hotel(hotel_id, in_date, out_date) for hotel_id in nearby_hotels])
+        availability = asyncio.as_completed(
+            [
+                check_availability_hotel(hotel_id, in_date, out_date)
+                for hotel_id in nearby_hotels
+            ]
+        )
 
         for fut in availability:
             hotel_id, is_available = await fut
@@ -78,14 +113,21 @@ async def search(lat: float, lon: float, in_date: str, out_date: str):
 async def recommend(
     recommendation_type: RecommendType, lat: float = 0.0, lon: float = 0.0
 ):
+    if IS_PYFLINK:
+        recommendation_type = recommendation_type.value
+
     # Here we select the 'partitioned services'.
-    recommend: Recommend = await Recommend.by_key(f"recommend-service-{_get_partition()}")
+    recommend: Recommend = await Recommend.by_key(
+        f"recommend-service-{_get_partition()}"
+    )
     profile: Profile = await Profile.by_key(f"profile-service-{_get_partition()}")
 
     # Get recommendations.
     recommendations: List[str] = await recommend.recommend(
-        recommendation_type, {"lat": lat, "lon": lon}
+        recommendation_type.value, {"lat": lat, "lon": lon}
     )
+
+    print(f"Found recommendations {recommendations}")
 
     # Get all profiles of recommended hotels.
     profiles: List[HotelProfile] = await profile.get_profiles(recommendations)

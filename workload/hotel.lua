@@ -6,8 +6,10 @@ local function get_user()
   local id = math.random(0, 500)
   local user_name = "TUDelft_" .. tostring(id)
   local pass_word = ""
-  for i = 0, 9, 1 do
-    pass_word = pass_word .. tostring(id)
+  pass_word = "random_password"
+
+  if math.random(0, 2) == 1 then
+    pass_word = "wrong_password"
   end
   return user_name, pass_word
 end

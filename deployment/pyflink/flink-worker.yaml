@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pyflink-taskmanager
+  namespace: stateflow
+spec:
+  replicas: 8
+  selector:
+    matchLabels:
+      app: pyflink
+      component: taskmanager
+  template:
+    metadata:
+      labels:
+        app: pyflink
+        component: taskmanager
+    spec:
+      containers:
+        - name: taskmanager
+          image: wzorgdrager/stateflow-pyflink:0.0.4
+          args: ["taskmanager"]
+          env:
+            - name: JOB_MANAGER_RPC_ADDRESS
+              value: pyflink-jobmanager
+          resources:
+            requests:
+              memory: "8000Mi"
+              cpu: "1750m"
+          ports:
+            - containerPort: 6122
+              name: rpc
+          volumeMounts:
+            - name: pyflink-config-volume
+              mountPath: /opt/flink/conf/
+          securityContext:
+            runAsUser: 9999  # refers to user _flink_ from official pyflink image, change if necessary
+      volumes:
+        - name: pyflink-config-volume
+          configMap:
+            name: pyflink-config
+            items:
+              - key: pyflink-conf.yaml
+                path: flink-conf.yaml
+              - key: log4j.properties
+                path: log4j-console.properties

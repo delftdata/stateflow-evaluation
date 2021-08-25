@@ -1,8 +1,10 @@
 .idea/
 venv/
-__pycache__
+__pycache__/
 bin/
 *.csv
 .ipynb_checkpoints/
 .DS_Store
 .serverless/
+venv3.7/
+venv.zip

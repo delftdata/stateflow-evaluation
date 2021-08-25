@@ -1,0 +1,14 @@
+FROM python:3.7
+
+COPY /benchmark/ /benchmark
+COPY ./requirements.txt /benchmark/requirements.txt
+ADD stateful_dataflows.tgz /
+
+RUN pip install -r benchmark/requirements.txt
+RUN pip install ../stateful_dataflows/
+
+EXPOSE 80
+
+WORKDIR benchmark/pyflink/
+
+ENTRYPOINT ["gunicorn", "-b", "0.0.0.0:80", "-w 4", "-k uvicorn.workers.UvicornWorker",  "frontend_pyflink:app"]

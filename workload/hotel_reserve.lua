@@ -9,6 +9,10 @@ local function get_user()
   for i = 0, 9, 1 do
     pass_word = pass_word .. tostring(id)
   end
+
+  if math.random(0, 2) == 1 then
+    pass_word = "random_password"
+  end
   return user_name, pass_word
 end
 

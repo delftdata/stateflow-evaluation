@@ -5,6 +5,7 @@ from benchmark.hotel.profile import Profile, HotelProfile
 from benchmark.hotel.recommend import RecommendType, Recommend, stateflow
 
 from stateflow.runtime.aws.gateway_lambda import AWSGatewayLambdaRuntime
+
 # Initialize stateflow
 flow = stateflow.init()
 

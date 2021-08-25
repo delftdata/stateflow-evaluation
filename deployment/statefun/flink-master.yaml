@@ -4,7 +4,7 @@ metadata:
   name: statefun-config
   namespace: stateflow
   labels:
-    app: flink
+    app: pyflink
 data:
   statefun-module: |+
     version: '3.0'
@@ -196,10 +196,10 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: flink-config
+  name: pyflink-config
   namespace: stateflow
   labels:
-    app: flink
+    app: pyflink
 data:
   flink-conf.yaml: |+
     jobmanager.rpc.address: statefun-master
@@ -257,17 +257,17 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: flink
+      app: pyflink
       component: jobmanager
   template:
     metadata:
       labels:
-        app: flink
+        app: pyflink
         component: jobmanager
     spec:
       containers:
         - name: jobmanager
-          image: apache/flink-statefun:3.0.0
+          image: apache/pyflink-statefun:3.0.0
           env:
           - name: ROLE
             value: "master"
@@ -293,19 +293,19 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 60
           volumeMounts:
-            - name: flink-config-volume
-              mountPath: /opt/flink/conf
+            - name: pyflink-config-volume
+              mountPath: /opt/pyflink/conf
             - name: statefun-config-volume
               mountPath: /opt/statefun/modules/stateflow/
           securityContext:
-            runAsUser: 9999  # refers to user _flink_ from official flink image, change if necessary
+            runAsUser: 9999  # refers to user _flink_ from official pyflink image, change if necessary
       volumes:
-        - name: flink-config-volume
+        - name: pyflink-config-volume
           configMap:
-            name: flink-config
+            name: pyflink-config
             items:
-              - key: flink-conf.yaml
-                path: flink-conf.yaml
+              - key: pyflink-conf.yaml
+                path: pyflink-conf.yaml
               - key: log4j.properties
                 path: log4j-console.properties
         - name: statefun-config-volume
@@ -331,13 +331,13 @@ spec:
     - name: ui
       port: 8081
   selector:
-    app: flink
+    app: pyflink
     component: jobmanager
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: flink-jobmanager-rest
+  name: pyflink-jobmanager-rest
   namespace: stateflow
 spec:
   type: LoadBalancer
@@ -346,5 +346,5 @@ spec:
       port: 8081
       targetPort: 8081
   selector:
-    app: flink
+    app: pyflink
     component: jobmanager
