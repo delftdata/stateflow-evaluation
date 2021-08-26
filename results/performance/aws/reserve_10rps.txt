@@ -1,4 +1,4 @@
-./wrk -t 16 -c 100 -d 30s -R 100 -s './hotel.lua' -L 'http://aaf0d497552dd476f951a25de688d598-1013860007.eu-west-2.elb.amazonaws.com/'
+./wrk -t 16 -c 100 -d 30s -R 10 -s './hotel.lua' -L 'http://aaf0d497552dd476f951a25de688d598-1013860007.eu-west-2.elb.amazonaws.com/'
  50.000%   75.65ms
  75.000%   85.12ms
  90.000%   95.49ms

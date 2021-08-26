@@ -13,12 +13,15 @@ y_99_aws = [11280, 18840, 28250, 27740, 33160, 34700, 33370]
 
 # Without locking
 y_99_aws_new = [303, 326, 232, 226, 221, 267, 294]
+
 plt.grid(axis="y", linestyle="--")
 plt.plot(x, y_aws_new, "-o", color="#118ab2", label="AWS Lambda 50p")
 plt.plot(x, y_99_aws_new, "--", marker="^", color="#118ab2", label="AWS Lambda 99p")
 plt.plot(x, y, "-o", color="#ef476f", label="Flink Statefun 50p")
 plt.plot(x, y_99, "--", marker="^", color="#ef476f", label="Flink Statefun 99p")
 plt.legend()
+#plt.annotate("15880 ms", xy=(700, 4000,), xytext=(700, 4100), color="black", ha="center", arrowprops=dict(arrowstyle='<-',lw=1.2))
+plt.ylim([0, 2200])
 plt.ylabel("Latency (in ms)")
 plt.xlabel("Throughput (req/s)")
 plt.tight_layout()
