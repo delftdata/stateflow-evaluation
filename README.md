@@ -1,5 +1,5 @@
 # Stateflow Evaluation
-This repository contains all code and results for the evaluation of the [stateflow framework](https://github.com/wzorgdrager/stateful_dataflows).
+This repository contains all code and results for the evaluation of the [stateflow framework](https://github.com/delftdata/stateflow).
 
 ## Setup
 To setup this repository, you need to have the stateflow framework installed locally. 
