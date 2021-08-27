@@ -1,4 +1,4 @@
-# Stateflow Evaluation
+# StateFlow Evaluation
 This repository contains all code and results for the evaluation of the [stateflow framework](https://github.com/delftdata/stateflow).
 
 ## Setup
