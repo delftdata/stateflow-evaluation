@@ -4,7 +4,7 @@ This repository contains all code and results for the evaluation of the [statefl
 ## Setup
 To setup this repository, you need to have the stateflow framework installed locally. 
 ```bash
-git clone https://github.com/wzorgdrager/stateful_dataflows
+git clone https://github.com/delftdata/stateflow
 pip install path_to_this_repo
 ```
 
