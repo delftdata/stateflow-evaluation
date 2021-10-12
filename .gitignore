@@ -8,3 +8,4 @@ bin/
 .serverless/
 venv3.7/
 venv.zip
+node_modules/

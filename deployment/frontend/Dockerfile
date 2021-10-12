@@ -2,7 +2,7 @@ FROM python:3.8
 
 COPY /benchmark/ /benchmark
 COPY ./requirements.txt /benchmark/requirements.txt
-ADD stateful_dataflows.tgz /
+ADD stateflow.tgz /
 
 RUN pip install -r benchmark/requirements.txt
 RUN pip install ../stateful_dataflows/

@@ -1,7 +1,7 @@
 {
-  "bootstrap_servers": "",
+  "bootstrap_servers": "localhost:9092",
   "sasl_mechanism": "PLAIN",
-  "security_protocol": "SASL_SSL",
+  "security_protocol": "PLAINTEXT",
   "sasl_plain_username": "",
   "sasl_plain_password": ""
 }

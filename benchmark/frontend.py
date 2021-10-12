@@ -3,21 +3,11 @@ import sys
 
 IS_PYFLINK = bool(os.getenv("PYFLINK"))
 
-
-if IS_PYFLINK:
-    from pyflink.user import User
-    from pyflink.search import Search, Geo, Rate
-    from pyflink.reservation import Reservation
-    from pyflink.hprofile import Profile, HotelProfile
-    from pyflink.recommend import RecommendType, Recommend
-
-    print("I'm here!")
-else:
-    from benchmark.hotel.user import User
-    from benchmark.hotel.search import Search, Geo, Rate
-    from benchmark.hotel.reservation import Reservation
-    from benchmark.hotel.profile import Profile, HotelProfile
-    from benchmark.hotel.recommend import RecommendType, Recommend
+from benchmark.hotel.user import User
+from benchmark.hotel.search import Search, Geo, Rate
+from benchmark.hotel.reservation import Reservation
+from benchmark.hotel.profile import Profile, HotelProfile
+from benchmark.hotel.recommend import RecommendType, Recommend
 
 from typing import List
 from random import randrange
@@ -25,22 +15,26 @@ import os
 import stateflow
 import asyncio
 from stateflow.client.fastapi.kafka import KafkaFastAPIClient, StateflowFailure
+from stateflow.serialization.proto.proto_serde import ProtoSerializer
 import json
+from stateflow.util.dataflow_operator_generator import generate_operators
 import argparse
 
 
 IS_KAFKA = bool(os.getenv("KAFKA"))
 IS_PYFLINK = bool(os.getenv("PYFLINK"))
+IS_FLINK = bool(os.getenv("FLINK"))
 
 AMOUNT_OF_HOTELS = 80
 AMOUNT_OF_USERS = 500
-PARTITION_COUNT = os.getenv("NUM_PARTITIONS", AMOUNT_OF_HOTELS)
-TIMEOUT = int(os.getenv("TIMEOUT", 5))
+PARTITION_COUNT = int(os.getenv("NUM_PARTITIONS", AMOUNT_OF_HOTELS))
+TIMEOUT = int(os.getenv("TIMEOUT", 15))
 
 print(IS_KAFKA)
 print(IS_PYFLINK)
+print(IS_FLINK)
 
-if IS_KAFKA and False:
+if IS_KAFKA:
     producer_config = json.load(open(os.environ.get("PRODUCER_CONF"), "r"))
     consumer_config = json.load(open(os.environ.get("CONSUMER_CONF"), "r"))
 
@@ -51,8 +45,20 @@ if IS_KAFKA and False:
         consumer_config=consumer_config,
         timeout=TIMEOUT,
     )
+elif IS_FLINK:
+    producer_config = json.load(open(os.environ.get("PRODUCER_CONF"), "r"))
+    consumer_config = json.load(open(os.environ.get("CONSUMER_CONF"), "r"))
+
+    client = KafkaFastAPIClient(
+        stateflow.init(),
+        statefun_mode=False,
+        producer_config=producer_config,
+        consumer_config=consumer_config,
+        timeout=TIMEOUT,
+        serializer=ProtoSerializer()
+    )
 elif IS_PYFLINK:
-    client = KafkaFastAPIClient(stateflow.init(), statefun_mode=False, timeout=TIMEOUT)
+    client = KafkaFastAPIClient(stateflow.init(), statefun_mode=False, timeout=TIMEOUT, serializer=ProtoSerializer())
 else:
     from stateflow.client.fastapi.aws_gateway import AWSGatewayFastAPIClient
 
@@ -103,8 +109,9 @@ async def search(lat: float, lon: float, in_date: str, out_date: str):
                 available_hotels.append(hotel_id)
 
         profiles: List[HotelProfile] = await profile.get_profiles(available_hotels)
-    except Exception:
-        return "Internal server error"
+    except Exception as exc:
+        raise exc
+        return f"Internal server error"
 
     return profiles
 
@@ -113,8 +120,8 @@ async def search(lat: float, lon: float, in_date: str, out_date: str):
 async def recommend(
     recommendation_type: RecommendType, lat: float = 0.0, lon: float = 0.0
 ):
-    if IS_PYFLINK:
-        recommendation_type = recommendation_type.value
+    # if IS_PYFLINK:
+    #     recommendation_type = recommendation_type.value
 
     # Here we select the 'partitioned services'.
     recommend: Recommend = await Recommend.by_key(
@@ -124,10 +131,8 @@ async def recommend(
 
     # Get recommendations.
     recommendations: List[str] = await recommend.recommend(
-        recommendation_type.value, {"lat": lat, "lon": lon}
+        recommendation_type, {"lat": lat, "lon": lon}
     )
-
-    print(f"Found recommendations {recommendations}")
 
     # Get all profiles of recommended hotels.
     profiles: List[HotelProfile] = await profile.get_profiles(recommendations)
