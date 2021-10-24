@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib import rcParams, rc
-rcParams['figure.figsize'] = [6, 5]
+rcParams['figure.figsize'] = [9, 5]
 # x = [100, 200, 300, 400, 500, 600, 700]
 x = [620, 1240, 1860, 2480, 3100, 3720, 4340]
 y = [495.61, 579.07, 645.12, 645.12, 830.97, 1003, 1960]
@@ -20,15 +20,15 @@ y_99_aws_new = [303, 326, 232, 226, 221, 267, 294]
 plt.grid(axis="y", linestyle="--")
 plt.plot(x, y_aws_new, "-o", color="#118ab2", label="AWS Lambda 50p")
 plt.plot(x, y_99_aws_new, "--", marker="^", color="#118ab2", label="AWS Lambda 99p")
-plt.plot(x, y, "-o", color="#ef476f", label="Flink Statefun 50p")
-plt.plot(x, y_99, "--", marker="^", color="#ef476f", label="Flink Statefun 99p")
-plt.plot(x, y_flink, "-o", color="#06d6a0", label="Flink + AWS 50p")
-plt.plot(x, y_99_flink, "--", marker="^", color="#06d6a0", label="Flink + AWS 99p")
+plt.plot(x, y, "-o", color="#ef476f", label="Statefun 50p")
+plt.plot(x, y_99, "--", marker="^", color="#ef476f", label="Statefun 99p")
+plt.plot(x, y_flink, "-o", color="#06d6a0", label="Flink JVM 50p")
+plt.plot(x, y_99_flink, "--", marker="^", color="#06d6a0", label="Flink JVM 99p")
 plt.legend()
 #plt.annotate("15880 ms", xy=(700, 4000,), xytext=(700, 4100), color="black", ha="center", arrowprops=dict(arrowstyle='<-',lw=1.2))
 plt.ylim([0, 2200])
 plt.ylabel("Latency (in ms)")
-plt.xlabel("Throughput (req/s)")
+plt.xlabel("Throughput (calls/s)")
 plt.tight_layout()
 plt.savefig("deathstar_throughput.pdf")
 plt.show()

@@ -28,10 +28,10 @@ x4 = [x + width for x in x3]
 fig, ax = plt.subplots()
 rects2 = ax.bar(x1, aws_no_lock_means, width, label="AWS Lambda", yerr=aws_no_lock_err, capsize=4, color="#ef476f")
 rects1 = ax.bar(
-    x2, statefun_means, width, label="Flink Statefun", yerr=statefun_err, capsize=4, color="#ffd166"
+    x2, statefun_means, width, label="Statefun", yerr=statefun_err, capsize=4, color="#ffd166"
 )
 rects3 = ax.bar(x3, pyflink_means, width, label="PyFlink", yerr=pyflink_err, capsize=4, color="#118ab2")
-rects4 = ax.bar(x4, flink_means, width, label="Flink + AWS", yerr=flink_err, capsize=4, color="#06d6a0")
+rects4 = ax.bar(x4, flink_means, width, label="Flink JVM", yerr=flink_err, capsize=4, color="#06d6a0")
 
 plt.legend()
 ax.set_ylabel("Latency (in ms)")
