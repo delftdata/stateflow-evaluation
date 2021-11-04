@@ -6,7 +6,7 @@ functions = StatefulFunctions()
 async def greet(ctx: Context, message: Message):
     user_state = ctx.storage.user
 
-    event = json.loads(message)
+    event = json.loads(message.event)
     username = event["username"]
     password = event["password"]
 

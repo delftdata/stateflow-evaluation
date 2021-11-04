@@ -93,6 +93,7 @@ async def search(lat: float, lon: float, in_date: str, out_date: str):
         # Find nearby hotels.
         nearby_hotels: List[str] = await search.nearby(lat, lon, geo, rate)
 
+
         # All available hotels.
         available_hotels: List[str] = []
 
