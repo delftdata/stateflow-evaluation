@@ -1,7 +1,12 @@
 from pyflink.common.typeinfo import Types
 from pyflink.datastream import StreamExecutionEnvironment
 from pyflink.datastream.connectors import FlinkKafkaConsumer, FlinkKafkaProducer
-from pyflink.datastream.functions import KeyedProcessFunction, RuntimeContext, ValueStateDescriptor, ValueState
+from pyflink.datastream.functions import (
+    KeyedProcessFunction,
+    RuntimeContext,
+    ValueStateDescriptor,
+    ValueState,
+)
 import json
 
 # 25 lines
@@ -28,10 +33,8 @@ class UserOperator(KeyedProcessFunction):
 
 
 env: StreamExecutionEnvironment = StreamExecutionEnvironment.get_execution_environment()
-env.from_source(FlinkKafkaConsumer())\
-    .map(lambda x: json.loads(x))\
-    .key_by(lambda x: x["username"])\
-    .process(UserOperator())\
-    .sink_to(FlinkKafkaProducer())
+env.from_source(FlinkKafkaConsumer()).map(lambda x: json.loads(x)).key_by(
+    lambda x: x["username"]
+).process(UserOperator()).sink_to(FlinkKafkaProducer())
 
 env.run()

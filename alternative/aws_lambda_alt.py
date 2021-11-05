@@ -28,34 +28,44 @@ def user_handler(event, context):
             user = json.loads(response["Item"])
             return {"message": user["password"] == password}
 
+
 # 13 lines, 8 non-appl
-client = boto3.client('lambda')
+client = boto3.client("lambda")
+
+
 def search_handler(event, context):
     lat = event["lat"]
     lon = event["lon"]
 
     payload = json.dumps({"lat": lat, "lon": lon})
-    geo_response = client.invoke(FunctionName='geo',InvocationType='Event', Payload=payload)
+    geo_response = client.invoke(
+        FunctionName="geo", InvocationType="Event", Payload=payload
+    )
     geo_payload = json.loads(geo_response.read())
     nearby_hotels: List[str] = geo_payload("hotel_ids")
 
     payload = json.dumps({"hotel_ids": nearby_hotels})
-    rate_response = client.invoke(FunctionName='rate', InvocationType='Event', Payload=payload)
+    rate_response = client.invoke(
+        FunctionName="rate", InvocationType="Event", Payload=payload
+    )
     rate_payload = json.loads(rate_response.read())
     rate_plans: List[str] = rate_payload.get("hotel_ids")
 
     return {"message": rate_plans}
+
 
 MAX_SEARCH_RESULTS = 5
 MAX_SEARCH_RADIUS = 10
 dynamodb = boto3.client("dynamodb")
 table = dynamodb.Table("geo")
 
+
 @dataclass
 class GeoPoint:
     hotelId: str
     lat: float
     lon: float
+
 
 def _dist(lat1, long1, lat2, long2):
     """
@@ -75,37 +85,40 @@ def _dist(lat1, long1, lat2, long2):
     km = 6371 * c
     return km
 
+
 # 31 lines, 10 NAP
 def geo_handler(event, context):
     lat = event["lat"]
     lon = event["lon"]
 
     try:
-        response = table.get_item(Key={"geo_points": "geo_points"}) # Global key
+        response = table.get_item(Key={"geo_points": "geo_points"})  # Global key
     except ClientError as e:
         return {"message": "geo points not found"}
     else:
         geo_points_raw = json.loads(response["Item"])
         geo_points = []
         for geo_point in geo_points_raw:
-            geo_points.append(GeoPoint(geo_point["hotelId"], geo_point["lat"], geo_point["lon"]))
+            geo_points.append(
+                GeoPoint(geo_point["hotelId"], geo_point["lat"], geo_point["lon"])
+            )
 
     all_distances = [
         (point.hotelId, _dist(point.lat, point.lon, float(lat), float(lon)))
         for point in geo_points
     ]
     # This is quite inefficient for large lists, but we can improve it later.
-    all_distances = [
-        dist for dist in all_distances if dist[1] <= MAX_SEARCH_RADIUS
-    ]
+    all_distances = [dist for dist in all_distances if dist[1] <= MAX_SEARCH_RADIUS]
     all_distances.sort(key=lambda x: x[1], reverse=False)
 
-    limit_distances = all_distances[0: MAX_SEARCH_RESULTS]
+    limit_distances = all_distances[0:MAX_SEARCH_RESULTS]
 
     return {"message": list([x[0] for x in limit_distances])}
 
+
 dynamodb = boto3.client("dynamodb")
 table = dynamodb.Table("profile")
+
 
 @dataclass
 class Address:
@@ -119,6 +132,7 @@ class Address:
     lat: float
     lon: float
 
+
 @dataclass
 class HotelProfile:
     id: str
@@ -126,6 +140,7 @@ class HotelProfile:
     phoneNumber: str
     description: str
     address: Address
+
 
 # 33 LOC, 12 NAP
 def profile_handler(event, context):
@@ -140,9 +155,24 @@ def profile_handler(event, context):
 
         for h_ser in response.items():
             h = json.loads(h_ser)
-            hotels.append(HotelProfile(h["id"], h["name"], h["phoneNumber"], h["description"],
-                                       Address(h["streetNumber"], h["streetName"],h["city"],
-                                               h["state"],h["country"], h["postalCode"],h["lat"], h["lon"])))
+            hotels.append(
+                HotelProfile(
+                    h["id"],
+                    h["name"],
+                    h["phoneNumber"],
+                    h["description"],
+                    Address(
+                        h["streetNumber"],
+                        h["streetName"],
+                        h["city"],
+                        h["state"],
+                        h["country"],
+                        h["postalCode"],
+                        h["lat"],
+                        h["lon"],
+                    ),
+                )
+            )
         return {"message": hotels}
 
 
@@ -164,6 +194,7 @@ class RatePlan:
     outDate: str
     roomType: RoomType
 
+
 dynamodb = boto3.client("dynamodb")
 table = dynamodb.Table("rate")
 
@@ -180,9 +211,21 @@ def rate_handler(event, context):
 
         for h_ser in response.items():
             h = json.loads(h_ser)
-            hotels.append(RatePlan(h["hotelId"], h["code"], h["inDate"], h["outDate"],
-                                       RoomType(h["bookableRate"], h["code"], h["description"],
-                                               h["totalRate"],  h["totalRateInclusive"])))
+            hotels.append(
+                RatePlan(
+                    h["hotelId"],
+                    h["code"],
+                    h["inDate"],
+                    h["outDate"],
+                    RoomType(
+                        h["bookableRate"],
+                        h["code"],
+                        h["description"],
+                        h["totalRate"],
+                        h["totalRateInclusive"],
+                    ),
+                )
+            )
         return {"message": hotels}
 
 
@@ -199,6 +242,7 @@ class RecommendType(Enum):
     DISTANCE = "DISTANCE"
     RATE = "RATE"
     PRICE = "PRICE"
+
 
 dynamodb = boto3.client("dynamodb")
 table = dynamodb.Table("recommend")
@@ -220,7 +264,6 @@ def recommend_handler(event, context):
             h = json.loads(h_ser)
             hotels.append(h["hotelId"], h["lat"], h["lon"], h["rate"], h["price"])
 
-
     if recommend_type == RecommendType.DISTANCE:
         # Hotels with minimal distance.
 
@@ -240,7 +283,7 @@ def recommend_handler(event, context):
 
             if dist == min_dist:
                 return_hotels.append(hotel.hotelId)
-        return {"message" :return_hotels}
+        return {"message": return_hotels}
 
     elif recommend_type == RecommendType.RATE:
         # Hotels with maximum rate.
@@ -252,7 +295,9 @@ def recommend_handler(event, context):
             if rate > max_rate:
                 max_rate = rate
 
-        return {"message" :[hotel.hotelId for hotel in hotels if hotel.rate == max_rate]}
+        return {
+            "message": [hotel.hotelId for hotel in hotels if hotel.rate == max_rate]
+        }
     elif recommend_type == RecommendType.PRICE:
         # Hotels with minimal price.
         min_price: float = sys.float_info.max
@@ -261,7 +306,10 @@ def recommend_handler(event, context):
             if hotel.price < min_price:
                 min_price = hotel.price
 
-        return {"message" : [hotel.hotelId for hotel in hotels if hotel.price == min_price]}
+        return {
+            "message": [hotel.hotelId for hotel in hotels if hotel.price == min_price]
+        }
+
 
 @dataclass
 class HotelReservation:
@@ -274,8 +322,13 @@ class HotelReservation:
     def has_date_conflict(self, in_date: datetime, out_date: datetime) -> bool:
         return in_date <= self.outDate and out_date >= self.inDate
 
+
 def check_availability(
-        reservations: List[HotelReservation], max_capacity: int, in_date: str, out_date: str, number_of_rooms: int
+    reservations: List[HotelReservation],
+    max_capacity: int,
+    in_date: str,
+    out_date: str,
+    number_of_rooms: int,
 ) -> bool:
     in_date = datetime.strptime(in_date, "%Y-%m-%d")
     out_date = datetime.strptime(out_date, "%Y-%m-%d")
@@ -308,37 +361,54 @@ def reserve_handler(event, context):
         max_capacity = h["max_capacity"]
 
         for r in h["reservations"]:
-            hotel_reservations.append(r["customerId"], r["inDate"], r["outDate"], r["numberOfRooms"])
+            hotel_reservations.append(
+                r["customerId"], r["inDate"], r["outDate"], r["numberOfRooms"]
+            )
 
     if event["type"] == "AVAILABILITY":
-        return {"message": check_availability(hotel_reservations, max_capacity, event["in_date"],
-                                              event["out_date"], event["number_of_rooms"])}
+        return {
+            "message": check_availability(
+                hotel_reservations,
+                max_capacity,
+                event["in_date"],
+                event["out_date"],
+                event["number_of_rooms"],
+            )
+        }
     elif event["type"] == "RESERVE_ROOM":
-        if not check_availability(hotel_reservations, max_capacity,
-                                  event["in_date"], event["out_date"], event["number_of_rooms"]):
-            return {"message": True}
+        if not check_availability(
+            hotel_reservations,
+            max_capacity,
+            event["in_date"],
+            event["out_date"],
+            event["number_of_rooms"],
+        ):
+            return {"message": False}
 
         in_date = datetime.strptime(event["in_date"], "%Y-%m-%d")
         out_date = datetime.strptime(event["out_date"], "%Y-%m-%d")
 
-        hotel_reservations.append(HotelReservation(event["customer_name"], in_date, out_date, event["number_of_rooms"]))
+        hotel_reservations.append(
+            HotelReservation(
+                event["customer_name"], in_date, out_date, event["number_of_rooms"]
+            )
+        )
         reservations = []
         for r in hotel_reservations:
-            reservations.append({
-                "customerId": r.customerId,
-                "inDate": r.inDate,
-                "outDate": r.outDate,
-                "number_of_rooms": r.numberOfRooms
-            })
+            reservations.append(
+                {
+                    "customerId": r.customerId,
+                    "inDate": r.inDate,
+                    "outDate": r.outDate,
+                    "number_of_rooms": r.numberOfRooms,
+                }
+            )
         table.put_item(
             Item={
-                'hotel_id': hotel_id,
-                'max_capacity': max_capacity,
-                'reservations': reservations
+                "hotel_id": hotel_id,
+                "max_capacity": max_capacity,
+                "reservations": reservations,
             }
         )
 
-        return {"message": False}
-
-
-
+        return {"message": True}
