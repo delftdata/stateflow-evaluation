@@ -9,7 +9,7 @@ import datetime
 
 functions = StatefulFunctions()
 @functions.bind(typename='nl.tudelft.benchmark/user', specs=[ValueSpec(name='user', type=StringType)])
-async def greet(ctx: Context, message: Message):
+async def user_handler(ctx: Context, message: Message):
     user_state = ctx.storage.user
 
     event = json.loads(message.event)
